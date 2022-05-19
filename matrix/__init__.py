@@ -10,7 +10,18 @@ class Matrix:
         elif len(dim) == 2:
             self.__create(dim[0], dim[1], data)
         else:
-            raise TypeError('Ошибка размерности входных данных!')
+            raise ValueError('Ошибка размерности входных данных!')
+
+    def __add__(self, second):
+        if isinstance(second, Matrix):
+            size = self.size()
+            if size == second.size():
+                out = [[self[i,j] + second[i,j] for j in range(size[1])] for i in range(size[0])]
+                return Matrix(out)
+            else:
+                raise ValueError('Матрицы разного размера!')
+        else:
+            raise TypeError('Второе слагаемое не является матрицей!')
 
     def __getitem__(self, pos: tuple):
         pos = pos[::self.__istranspose]
@@ -23,10 +34,35 @@ class Matrix:
                 for m, unit in enumerate(string):
                     self[n,m] = unit
             else:
-                raise TypeError('Строки должны быть одной длины!')
+                raise ValueError('Строки должны быть одной длины!')
 
     def __len__(self):
         return len(self.__values[0])*len(self.__values)
+
+    def __mul__(self, second):
+        size = self.size()
+        if isinstance(second, (float, int)):
+            out = [[self[i,j] * second for j in range(size[1])] for i in range(size[0])]
+            return Matrix(out)
+        elif isinstance(second, Matrix):
+            if size[1] == second.size()[0]: 
+                return Matrix(self.__multiply(second))
+            else:
+                raise ValueError('Количество столбцов первой матрицы не равно количеству строко второй!')
+        else:
+            raise TypeError('Умножение с данным типом данных не поддерживается!')
+
+    def __multiply(self, matrix):
+        out = list()
+        f_size = self.size()
+        s_size = matrix.size()
+        for n in range(f_size[0]):
+            out.append(list())
+            for m in range(s_size[1]):
+                out[n].append(0)
+                for i in range(f_size[1]):
+                    out[n][m] += self[n,i]*matrix[i,m]
+        return out
 
     def __setitem__(self, pos: tuple, value):
         pos = pos[::self.__istranspose]
@@ -46,6 +82,7 @@ class Matrix:
 
     def transpose(self):
         self.__istranspose *= -1
+        return self
 
     @staticmethod
     def dimension(obj):
@@ -65,8 +102,4 @@ class Matrix:
     @staticmethod
     def zero(row, colum):
         return Matrix([[0] * colum for i in range(row)])
-
-a = [1,2,3]
-test = Matrix(a)
-test.transpose()
-print(test)
+        
