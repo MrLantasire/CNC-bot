@@ -60,8 +60,10 @@ class CNC:
         else:
             self.__bot.send_message(user_id, 'Выполняю вычисления...')
             data = self.__users[user_id]['data']
-            file_name = 'programs/' + str(user_id) + '/' + 'probing.h'
-            Cycle().processing(tuple(data), file_name)
+            file_name = './programs/' + str(user_id) + '/' + 'probing.h'
+            Cycle.processing(tuple(data), file_name)
+            with open(file_name, 'rb') as reply:
+                self.__bot.send_document(user_id, reply)
 
     def __probing(self, user_id):
         self.__users[user_id] = dict()
