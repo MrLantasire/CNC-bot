@@ -1,3 +1,5 @@
+from math import sin, cos, pi
+
 class Matrix:
 
     def __init__(self, data):
@@ -98,8 +100,40 @@ class Matrix:
     @staticmethod
     def identity(row, colum):
         return Matrix([ [(0 + int(i == j)) for i in range(colum)] for j in range(row)])
-    
+
+    @staticmethod
+    def length(vector):
+        out = 0
+        for unit in vector:
+            out += unit ** 2
+        return out ** (1/2)
+
+    @staticmethod
+    def normalize(vector):
+        length = Matrix.length(vector)
+        out = list()
+        for unit in vector:
+            if length:
+                out.append(unit/length)
+            else:
+                out.append(unit)
+        return out
+
+    @staticmethod
+    def transformation3D(vector, angle):
+        u = Matrix.normalize(vector)
+        grad = (angle * pi)/180. 
+        return Matrix([
+            [ ( u[0]*u[0] + cos(grad)*(1-u[0]*u[0]) ),
+              ( u[0]*u[1]*(1-cos(grad)) - u[2]*sin(grad) ),
+              ( u[2]*u[0]*(1-cos(grad)) + u[1]*sin(grad) )],
+            [ ( u[0]*u[1]*(1-cos(grad)) + u[2]*sin(grad) ),
+              ( u[1]*u[1] + cos(grad)*(1-u[1]*u[1]) ),
+              ( u[1]*u[2]*(1-cos(grad)) - u[0]*sin(grad) )],
+            [ ( u[2]*u[0]*(1-cos(grad)) - u[1]*sin(grad) ),
+              ( u[1]*u[2]*(1-cos(grad)) + u[0]*sin(grad) ),
+              ( u[2]*u[2] + cos(grad)*(1-u[2]*u[2]) )] ])
+
     @staticmethod
     def zero(row, colum):
         return Matrix([[0] * colum for i in range(row)])
-        
