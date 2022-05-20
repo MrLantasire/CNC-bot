@@ -1,6 +1,5 @@
 from bot import Bot
-from postprocessing import Postprocessor
-from matrix import Matrix
+from counter import Cycle
 import config
 
 TOKEN = config.telegram_token
@@ -60,6 +59,9 @@ class CNC:
             self.__bot.send_message(user_id, 'Введите угловой шаг измерения:')
         else:
             self.__bot.send_message(user_id, 'Выполняю вычисления...')
+            data = self.__users[user_id]['data']
+            file_name = 'programs/' + str(user_id) + '/' + 'probing.h'
+            Cycle().processing(tuple(data), file_name)
 
     def __probing(self, user_id):
         self.__users[user_id] = dict()
