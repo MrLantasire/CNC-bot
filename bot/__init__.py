@@ -68,8 +68,8 @@ class Bot:
 
   # Метод для связи с фукнцией, вызываемой после ответа сервера
   def callback(self, func):
-    if isinstance(func, types.FunctionType):
-        self.__callback = func
+    if isinstance(func, (types.FunctionType, types.MethodType)):
+      self.__callback = func
 
   def send_message(self, id, message : str):
     request = Bot.__url + self.__token + '/sendMessage'
