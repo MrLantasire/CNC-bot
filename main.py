@@ -64,6 +64,7 @@ class CNC:
             Cycle.processing(tuple(data), file_name)
             with open(file_name, 'rb') as reply:
                 self.__bot.send_document(user_id, reply)
+            self.__users.pop(user_id)
 
     def __probing(self, user_id):
         self.__users[user_id] = dict()
