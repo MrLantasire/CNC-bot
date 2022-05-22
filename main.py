@@ -27,7 +27,7 @@ class CNC:
         if not text.startswith('/'):
             if user_id in self.__users:
                 elements = list()
-                for par in text.split(','):
+                for par in text.replace('\n',',').replace(',,',',').split(','):
                     elements.append(par.strip())
                 self.__add_parameters(user_id, elements)
 
