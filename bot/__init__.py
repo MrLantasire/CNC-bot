@@ -52,7 +52,8 @@ class Bot:
         if unit['update_id'] > self.__offset:
           self.__offset = unit['update_id']
           if 'message' in unit:
-            self.__parse(unit['message'])
+            if 'text' in unit['message']:
+              self.__parse(unit['message'])
       self.__lock.acquire()
       flag = self.__stop_flag
       self.__lock.release()
