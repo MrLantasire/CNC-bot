@@ -19,6 +19,10 @@ class CNC:
             if not error_flag and self.__is_number(unit):
                 self.__users[user_id]['data'].append(float(unit))
                 count_param += 1
+                if count_param == 5 and not self.__is_out_of_range_digit(unit, 3, 200):
+                    self.__users[user_id]['data'].pop(count_param - 1)
+                    error_flag = True
+                    count_param -= 1
             else:
                 error_flag = True
         self.__messages(user_id, count_param, error_flag)
@@ -41,8 +45,8 @@ class CNC:
 
     def __messages(self, user_id, num, error):
         if error:
-            self.__bot.send_message(user_id, 'В ведённых Вами данных были найдены ошибки.\
-            \nДля ввода допускаются только числа, а параметры должны разделяться запятой!')
+            self.__bot.send_message(user_id, 'В ведённых Вами данных были найдены ошибки.' +
+            '\nДля ввода допускаются только числа, а параметры должны разделяться запятой!')
         if num == 0:
             self.__bot.send_message(user_id, 'Введите приблизительную координату Х центра поверхности измерения:')
         elif num == 1:
@@ -52,7 +56,10 @@ class CNC:
         elif num == 3:
             self.__bot.send_message(user_id, 'Введите приблизительный диаметр цилиндрической поверхности:')
         elif num == 4:
-            self.__bot.send_message(user_id, 'Введите количество точек измерения:\nКоличество точек должно быть больше 3!')
+            if error:
+                self.__bot.send_message(user_id, 'Допускаются целые числа от 3 до 200!')
+            self.__bot.send_message(user_id, 'Введите количество точек измерения:\nКоличество точек должно '+
+            'быть больше 3, но меньше 200!')
         elif num == 5:
             self.__bot.send_message(user_id, 'Введите начальный угол по оси C для измерения:')
         elif num == 6:
@@ -87,6 +94,25 @@ class CNC:
             float(string)
             return True
         except ValueError:
+            return False
+
+    @staticmethod
+    def __is_digit(string):
+        try:
+            int(string)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
+    def __is_out_of_range_digit(string, min, max):
+        if CNC.__is_digit(string):
+            num = int(string)
+            if min <= num <= max:
+                return True
+            else:
+                return False
+        else:
             return False
 
 if __name__ == "__main__":
