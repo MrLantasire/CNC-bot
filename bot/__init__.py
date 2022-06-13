@@ -47,13 +47,17 @@ class Bot:
     flag = self.__stop_flag
     self.__lock.release()
     while flag:
-      data = self.__get_raw_response(self.__offset)
-      for unit in data:
-        if unit['update_id'] > self.__offset:
-          self.__offset = unit['update_id']
-          if 'message' in unit:
-            if 'text' in unit['message']:
-              self.__parse(unit['message'])
+      try:
+        data = self.__get_raw_response(self.__offset)
+      except BaseException as err:
+        print('Непредвиденная ошибка.', err)
+      else:
+        for unit in data:
+          if unit['update_id'] > self.__offset:
+            self.__offset = unit['update_id']
+            if 'message' in unit:
+              if 'text' in unit['message']:
+                self.__parse(unit['message'])
       self.__lock.acquire()
       flag = self.__stop_flag
       self.__lock.release()

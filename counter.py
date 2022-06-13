@@ -19,7 +19,7 @@ class Cycle:
         rotB = Matrix.transformation3D([0,1,0], angleB)
 
         for i in range(int(data[4])):
-            angleC = data[5] + data[4] * i
+            angleC = data[5] + data[6] * i
             transform = rotB * Matrix.transformation3D([0,0,1], angleC)
             point = transform * center
             coord = point[0,0],point[1,0],point[2,0]
