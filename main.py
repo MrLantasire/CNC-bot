@@ -6,6 +6,8 @@ TOKEN = config.telegram_token
 
 class CNC:
 
+    _range = (3, 3600)
+
     def __init__(self):
         self.__bot = Bot(TOKEN)
         self.__users = dict()
@@ -19,7 +21,7 @@ class CNC:
             if not error_flag and self.__is_number(unit):
                 self.__users[user_id]['data'].append(float(unit))
                 count_param += 1
-                if count_param == 5 and not self.__is_out_of_range_digit(unit, 3, 3600):
+                if count_param == 5 and not self.__is_out_of_range_digit(unit, *CNC._range):
                     self.__users[user_id]['data'].pop(count_param - 1)
                     error_flag = True
                     count_param -= 1
@@ -57,9 +59,10 @@ class CNC:
             self.__bot.send_message(user_id, 'Введите приблизительный диаметр цилиндрической поверхности:')
         elif num == 4:
             if error:
-                self.__bot.send_message(user_id, 'Допускаются целые числа от 3 до 3600!')
-            self.__bot.send_message(user_id, 'Введите количество точек измерения:\nКоличество точек должно '+
-            'быть больше 3, но меньше 3600!')
+                self.__bot.send_message(user_id, 'Допускаются целые числа от ' 
+                + str(CNC._range[0]) + ' до ' + str(CNC._range[1]) + '!')
+            self.__bot.send_message(user_id, 'Введите количество точек измерения:\nКоличество точек должно ' +
+            'быть больше ' + str(CNC._range[0]) + ', но меньше ' + str(CNC._range[1]) + '!')
         elif num == 5:
             self.__bot.send_message(user_id, 'Введите начальный угол по оси C для измерения:')
         elif num == 6:
